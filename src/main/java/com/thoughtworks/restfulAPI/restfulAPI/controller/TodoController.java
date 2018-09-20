@@ -8,7 +8,6 @@ import com.thoughtworks.restfulAPI.restfulAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +26,6 @@ public class TodoController {
 
     @GetMapping(value = "/{id}")
     public Todo getListById(@PathVariable(value = "id") Long id) throws HttpStateCode404Exception {
-//        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        System.out.println(user);
         return todoService.getTodoById(id);
     }
 
@@ -61,21 +58,21 @@ public class TodoController {
         return todoService.getListWithPage(page,size);
     }
 
-//    @PostMapping("/serach")
-//    public  List<Todo> getListWithSearch(@RequestBody RequestParam requestParam){
-//        return todoService.getListWithSearchCondintion(requestParam);
+    @GetMapping("/search")
+    public  List<Todo> getListWithSearch(@RequestParam List<Long> tagsId){
+        return todoService.getListWithSearchCondintion(tagsId);
+    }
+
+//
+//    @PostMapping("/register")
+//    public void register(@RequestBody User user){
+//         userService.register(user);
 //    }
-
-
-    @PostMapping("/register")
-    public void register(@RequestBody User user){
-         userService.register(user);
-    }
-
-    @PostMapping("/login")
-    public Long login(@RequestBody User user){
-        return userService.login(user);
-    }
+//
+//    @PostMapping("/login")
+//    public String login(@RequestBody User user){
+//        return userService.login(user);
+//    }
 
 
 }

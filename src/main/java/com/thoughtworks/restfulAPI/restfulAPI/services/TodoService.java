@@ -1,14 +1,15 @@
 package com.thoughtworks.restfulAPI.restfulAPI.services;
 
 import com.thoughtworks.restfulAPI.restfulAPI.exception.HttpStateCode404Exception;
-import com.thoughtworks.restfulAPI.restfulAPI.model.RequestParam;
 import com.thoughtworks.restfulAPI.restfulAPI.model.Todo;
+import com.thoughtworks.restfulAPI.restfulAPI.model.User;
 import com.thoughtworks.restfulAPI.restfulAPI.repository.TagRepository;
 import com.thoughtworks.restfulAPI.restfulAPI.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,19 +19,20 @@ public class TodoService {
 
     @Autowired private TodoRepository todoRepository;
     @Autowired private TagRepository tagRepository;
-
     @Autowired private UserService userService;
 
+
     public Page<Todo> getTodoLists(Pageable pageable){
-//        String userId = userService.verifySessionId(session);
-//        return todoRepository.findAllByUserId(Long.parseLong(userId), pageable);
-        return todoRepository.findAll(pageable);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<Todo> allLists = todoRepository.findAllByUserId(user.getId(), pageable);
+        return allLists;
     }
 
 
     public Todo getTodoById(Long id) throws HttpStateCode404Exception {
-        if (todoRepository.findOne(id) != null) {
-            return todoRepository.findOne(id);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (todoRepository.findByIdAndUserId(id,user.getId()) != null) {
+            return todoRepository.findByIdAndUserId(id,user.getId());
         }
         else{
             throw new HttpStateCode404Exception();
@@ -38,22 +40,25 @@ public class TodoService {
     }
 
     public Todo addTodo(Todo todo) {
-//        String userId = userService.verifySessionId(session);
-//        todo.setUserId(Long.parseLong(userId));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        todo.setUserId(user.getId());
         return todoRepository.save(todo);
     }
 
     public void editTodo(Todo todo) {
-        Todo editTodo = todoRepository.findOne(todo.getId());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Todo editTodo = todoRepository.findByIdAndUserId(todo.getId(),user.getId());
         editTodo.setName(todo.getName());
         editTodo.setDueDate(todo.getDueDate());
         editTodo.setStatus(todo.getStatus());
         editTodo.setTags(todo.getTags());
+        editTodo.setUserId(user.getId());
         todoRepository.save(editTodo);
     }
 
     public void deleteTodo(Long id) {
-        todoRepository.delete(id);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        todoRepository.deleteByIdAndUserId(id,user.getId());
     }
 
     public List<Todo> findTodoByName(String name, Pageable pageable){
@@ -67,9 +72,7 @@ public class TodoService {
 
     }
 
-
-//    public List<Todo> getListWithSearchCondintion(RequestParam requestParam) {
-////        return todoRepository.findByTag_TagIdIn(requestParam.getTagIds());
-//        return null;
-//    }
+    public List<Todo> getListWithSearchCondintion(List<Long> tagIds) {
+        return todoRepository.findByTags_IdIn(tagIds);
+    }
 }

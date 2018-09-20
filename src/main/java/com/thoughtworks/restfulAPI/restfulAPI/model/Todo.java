@@ -21,14 +21,13 @@ public class Todo {
     private String name;
     private String status;
     private Date dueDate;
-    private String tags;
     private Long userId;
 
     @ManyToMany
     @JoinTable(name = "todo_tag",
         joinColumns = @JoinColumn(name = "todo_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Tag> useTags = new HashSet<>();
+    private Set<Tag> tags = new HashSet<>();
 
 
 }

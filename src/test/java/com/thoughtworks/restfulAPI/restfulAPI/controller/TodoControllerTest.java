@@ -1,38 +1,26 @@
 package com.thoughtworks.restfulAPI.restfulAPI.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.restfulAPI.restfulAPI.model.Todo;
 import com.thoughtworks.restfulAPI.restfulAPI.repository.TodoRepository;
-import com.thoughtworks.restfulAPI.restfulAPI.services.TodoService;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TodoControllerTest {
 
     @Autowired
@@ -43,19 +31,44 @@ public class TodoControllerTest {
         todoRepository.save(Todo.builder()
         .name("meet L").status("to do").build());
 
-        Pageable pageable = null;
-        List<Todo> todoList = todoRepository.findByNameContains("meet",pageable);
+        List<Todo> todoList = todoRepository.findByNameContains("meet",null);
         assertThat(todoList.size(), Matchers.is(1));
         assertThat(todoList.get(0).getName(), Matchers.is("meet L"));
     }
 
+    @Test
+    public void shouldFindTodoWhenAdd() {
+        todoRepository.save(Todo.builder()
+        .name("meet L").status("to do").build());
 
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        List<Todo> todoList = todoRepository.findAll();
+        assertThat(todoList.size(), Matchers.is(1));
+        assertThat(todoList.get(0).getName(), Matchers.is("meet L"));
     }
+
+    @Test
+    public void shouldFindTodoById() {
+        todoRepository.save(Todo.builder()
+        .name("meettt L").status("to do").build());
+
+
+        Todo todo = todoRepository.findOne(1l);
+        assertThat(todo.getId(), Matchers.is(1l));
+        assertThat(todo.getName(), Matchers.is("cc L"));
+    }
+
+    @Test
+    public void shouldFindNoTodoWhenDeleteById() {
+        todoRepository.save(Todo.builder()
+        .name("meet L").status("to do").build());
+        todoRepository.save(Todo.builder().name("cc L").status("to do").build());
+        todoRepository.delete(2l);
+        Todo todo = todoRepository.findOne(2l);
+        assertThat(todo, Matchers.is(Matchers.nullValue()));
+    }
+
+
+
+
+
 }

@@ -14,21 +14,23 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private  HashMap<Long, HashMap<String, String>> sessions = new HashMap<>();
+    private  HashMap<String, HashMap<String, String>> sessions = new HashMap<>();
 
     public void register(User user) {
          userRepository.save(user);
     }
 
-    public Long login(User user) {
-
+    /**
+     * return session id
+     */
+    public String login(User user) {
         User userFind = userRepository.findByName(user.getName());
 
         if (userFind.getPassword().equals(user.getPassword())) {
             HashMap<String, String> userInfo = new HashMap<>();
             userInfo.put("userName", userFind.getName());
             userInfo.put("userId", userFind.getId().toString());
-            Long key = new Date().getTime();
+            String key = String.valueOf(new Date().getTime());
             sessions.put(key, userInfo);
             return key;
         }
@@ -36,9 +38,9 @@ public class UserService {
         return null;
     }
 
-    public String verifySessionId(Long sessionId){
+    public Long getUserIdBySessionId(String sessionId){
         if (sessions.containsKey(sessionId)) {
-            return  sessions.get(sessionId).get("userId");
+            return  Long.parseLong(sessions.get(sessionId).get("userId"));
         }
         return null;
     }
