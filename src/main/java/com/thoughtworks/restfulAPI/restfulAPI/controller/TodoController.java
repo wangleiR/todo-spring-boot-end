@@ -2,10 +2,13 @@ package com.thoughtworks.restfulAPI.restfulAPI.controller;
 
 import com.thoughtworks.restfulAPI.restfulAPI.exception.HttpStateCode404Exception;
 import com.thoughtworks.restfulAPI.restfulAPI.model.Todo;
+import com.thoughtworks.restfulAPI.restfulAPI.model.User;
 import com.thoughtworks.restfulAPI.restfulAPI.services.TodoService;
+import com.thoughtworks.restfulAPI.restfulAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
 public class TodoController {
 
     @Autowired  private TodoService todoService;
+    @Autowired  private UserService userService;
 
     @GetMapping
     public Page<Todo> getTodo(Pageable pageable){
@@ -23,6 +27,8 @@ public class TodoController {
 
     @GetMapping(value = "/{id}")
     public Todo getListById(@PathVariable(value = "id") Long id) throws HttpStateCode404Exception {
+//        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        System.out.println(user);
         return todoService.getTodoById(id);
     }
 
@@ -53,6 +59,22 @@ public class TodoController {
             @PathVariable(value = "page") Integer page,
             @PathVariable(value = "size") Integer size) {
         return todoService.getListWithPage(page,size);
+    }
+
+//    @PostMapping("/serach")
+//    public  List<Todo> getListWithSearch(@RequestBody RequestParam requestParam){
+//        return todoService.getListWithSearchCondintion(requestParam);
+//    }
+
+
+    @PostMapping("/register")
+    public void register(@RequestBody User user){
+         userService.register(user);
+    }
+
+    @PostMapping("/login")
+    public Long login(@RequestBody User user){
+        return userService.login(user);
     }
 
 

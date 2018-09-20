@@ -1,1 +1,0 @@
-INSERT INTO  todo (id, name, status, due_date, tags) VALUES (100, "meet L", "To DO", "2018-9-20", "meeting");
