@@ -19,8 +19,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TodoControllerTest {
 
     @Autowired
@@ -66,9 +64,5 @@ public class TodoControllerTest {
         Todo todo = todoRepository.findOne(2l);
         assertThat(todo, Matchers.is(Matchers.nullValue()));
     }
-
-
-
-
 
 }

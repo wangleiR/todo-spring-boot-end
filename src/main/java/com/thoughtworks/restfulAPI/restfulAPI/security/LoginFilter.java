@@ -2,6 +2,7 @@ package com.thoughtworks.restfulAPI.restfulAPI.security;
 import com.thoughtworks.restfulAPI.restfulAPI.model.User;
 import com.thoughtworks.restfulAPI.restfulAPI.repository.UserRepository;
 import com.thoughtworks.restfulAPI.restfulAPI.services.UserService;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,9 +27,9 @@ public class LoginFilter  extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header != null){
-            Long userId  = userService.getUserIdBySessionId(header);
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (token != null){
+            Long userId  = userService.getUserIdByToken(token);
             if (userId == null){
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;

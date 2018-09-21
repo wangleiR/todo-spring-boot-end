@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -18,6 +19,8 @@ public interface TodoRepository  extends JpaRepository<Todo,Long> {
 
 
     List<Todo> findByNameContains(String name, Pageable pageable);
+
+    List<Todo> findAllByDueDateBetween(Date from, Date to);
 
     Page<Todo> findAllByUserId(Long userId, Pageable pageable);
 

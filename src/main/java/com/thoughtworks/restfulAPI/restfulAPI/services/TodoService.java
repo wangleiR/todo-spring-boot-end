@@ -72,7 +72,13 @@ public class TodoService {
 
     }
 
-    public List<Todo> getListWithSearchCondintion(List<Long> tagIds) {
-        return todoRepository.findByTags_IdIn(tagIds);
+    public List<Todo> getListWithSearchCondintion(List<Long> tagIds, String from, String to) {
+        if (tagIds != null){
+            return todoRepository.findByTags_IdIn(tagIds);
+        }
+        if (from != null && to != null){
+//            return todoRepository.findAllByDueDateBetween(from,to);
+        }
+        return null;
     }
 }

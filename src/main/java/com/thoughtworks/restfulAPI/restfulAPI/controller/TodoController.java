@@ -8,8 +8,10 @@ import com.thoughtworks.restfulAPI.restfulAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -59,20 +61,11 @@ public class TodoController {
     }
 
     @GetMapping("/search")
-    public  List<Todo> getListWithSearch(@RequestParam List<Long> tagsId){
-        return todoService.getListWithSearchCondintion(tagsId);
+    public  List<Todo> getListWithSearch(@RequestParam(required = false)  String from,
+                                         @RequestParam(required = false)  String to,
+                                         @RequestParam(required = false)  List<Long> tagsId){
+        return todoService.getListWithSearchCondintion(tagsId,from,to);
     }
-
-//
-//    @PostMapping("/register")
-//    public void register(@RequestBody User user){
-//         userService.register(user);
-//    }
-//
-//    @PostMapping("/login")
-//    public String login(@RequestBody User user){
-//        return userService.login(user);
-//    }
 
 
 }
