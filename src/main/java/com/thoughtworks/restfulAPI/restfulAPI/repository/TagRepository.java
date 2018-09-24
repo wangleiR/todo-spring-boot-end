@@ -14,4 +14,6 @@ public interface TagRepository  extends JpaRepository<Tag,Long> {
     Page<Tag> findAllByUserId(Long id, Pageable pageable);
 
     Tag findOneByUserIdAndValue(Long id, String value);
+
+    Page<Tag> findByValueAndUserId(String value, Long id, Pageable pageable);
 }

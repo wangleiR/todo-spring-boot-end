@@ -33,4 +33,7 @@ public interface TodoRepository  extends JpaRepository<Todo,Long> {
     @Query("delete from Todo t where t.id = ?1 and t.userId = ?2")
     void deleteByIdAndUserId(Long id,Long userId);
 
+    Page<Todo> findByUserIdAndNameContains(Long userId, String name, Pageable pageable);
+
+    Page<Todo> findByUserIdAndTags_Value(Long userId, String value, Pageable pageable);
 }

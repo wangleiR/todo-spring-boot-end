@@ -1,8 +1,10 @@
 package com.thoughtworks.restfulAPI.restfulAPI.controller;
 
 import com.thoughtworks.restfulAPI.restfulAPI.exception.HttpStateCode404Exception;
+import com.thoughtworks.restfulAPI.restfulAPI.model.Tag;
 import com.thoughtworks.restfulAPI.restfulAPI.model.Todo;
 import com.thoughtworks.restfulAPI.restfulAPI.model.User;
+import com.thoughtworks.restfulAPI.restfulAPI.services.TagService;
 import com.thoughtworks.restfulAPI.restfulAPI.services.TodoService;
 import com.thoughtworks.restfulAPI.restfulAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ public class TodoController {
 
     @Autowired  private TodoService todoService;
     @Autowired  private UserService userService;
+
 
     @GetMapping
     public Page<Todo> getTodo(Pageable pageable){
@@ -47,12 +50,6 @@ public class TodoController {
     }
 
 
-    @GetMapping(value = "/name/{name}")
-    public List<Todo> getListById(@PathVariable(value = "name") String name,
-                                  Pageable pageable) {
-        return todoService.findTodoByName(name, pageable);
-    }
-
     @GetMapping(value = "/page/{page}/size/{size}")
     public Page<Todo> getListWithPage(
             @PathVariable(value = "page") Integer page,
@@ -61,10 +58,13 @@ public class TodoController {
     }
 
     @GetMapping("/search")
-    public  List<Todo> getListWithSearch(@RequestParam(required = false)  String from,
+    public  Page<Todo> getListWithSearch(@RequestParam(required = false)  String from,
                                          @RequestParam(required = false)  String to,
-                                         @RequestParam(required = false)  List<Long> tagsId){
-        return todoService.getListWithSearchCondintion(tagsId,from,to);
+                                         @RequestParam(required = false)  String searchNameOrTagsValue,
+                                         Pageable pageable){
+
+            return todoService.getListWithSearchCondintion(from,to,searchNameOrTagsValue,pageable);
+
     }
 
 

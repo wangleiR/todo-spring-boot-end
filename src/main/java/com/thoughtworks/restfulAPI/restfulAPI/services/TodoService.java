@@ -1,6 +1,7 @@
 package com.thoughtworks.restfulAPI.restfulAPI.services;
 
 import com.thoughtworks.restfulAPI.restfulAPI.exception.HttpStateCode404Exception;
+import com.thoughtworks.restfulAPI.restfulAPI.model.Tag;
 import com.thoughtworks.restfulAPI.restfulAPI.model.Todo;
 import com.thoughtworks.restfulAPI.restfulAPI.model.User;
 import com.thoughtworks.restfulAPI.restfulAPI.repository.TagRepository;
@@ -12,14 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class TodoService {
 
     @Autowired private TodoRepository todoRepository;
     @Autowired private TagRepository tagRepository;
     @Autowired private UserService userService;
+    @Autowired private TagService tagService;
 
 
     public Page<Todo> getTodoLists(Pageable pageable){
@@ -61,10 +61,6 @@ public class TodoService {
         todoRepository.deleteByIdAndUserId(id,user.getId());
     }
 
-    public List<Todo> findTodoByName(String name, Pageable pageable){
-        return todoRepository.findByNameContains(name, pageable);
-    }
-
     public Page<Todo> getListWithPage(Integer page, Integer size) {
         Pageable pageable = new PageRequest(page-1,size);
         Page<Todo> result = todoRepository.findAll(pageable);
@@ -72,13 +68,19 @@ public class TodoService {
 
     }
 
-    public List<Todo> getListWithSearchCondintion(List<Long> tagIds, String from, String to) {
-        if (tagIds != null){
-            return todoRepository.findByTags_IdIn(tagIds);
+    public Page<Todo> getListWithSearchCondintion( String from, String to, String searchNameOrTagsValue,Pageable pageable) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Page<Tag> tagList = tagService.getTagListByValueAndUserId(searchNameOrTagsValue,user.getId(),pageable);
+
+        if (tagList.getContent().size() > 0){// if tagValue equal queryParam, search it as tag, else search it as todoName
+
+            return todoRepository.findByUserIdAndTags_Value(user.getId(), searchNameOrTagsValue, pageable);
+        }else {
+
+            return todoRepository.findByUserIdAndNameContains(user.getId(), searchNameOrTagsValue, pageable);
         }
-        if (from != null && to != null){
-//            return todoRepository.findAllByDueDateBetween(from,to);
-        }
-        return null;
+
     }
 }

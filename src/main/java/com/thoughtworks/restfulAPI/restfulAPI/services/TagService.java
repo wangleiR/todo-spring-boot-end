@@ -37,4 +37,9 @@ public class TagService {
         }
         return null;
     }
+
+
+    public Page<Tag> getTagListByValueAndUserId(String value, Long id,Pageable pageable) {
+        return tagRepository.findByValueAndUserId(value,id,pageable);
+    }
 }
