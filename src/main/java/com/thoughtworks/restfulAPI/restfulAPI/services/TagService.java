@@ -1,0 +1,40 @@
+package com.thoughtworks.restfulAPI.restfulAPI.services;
+
+import com.thoughtworks.restfulAPI.restfulAPI.model.Tag;
+import com.thoughtworks.restfulAPI.restfulAPI.model.User;
+import com.thoughtworks.restfulAPI.restfulAPI.repository.TagRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+
+@Service
+public class TagService {
+
+    @Autowired
+    private TagRepository tagRepository;
+
+    public Tag addTag(Tag tag) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.getId() != null){
+            Tag tagExist = tagRepository.findOneByUserIdAndValue(user.getId(), tag.getValue());
+            if (tagExist == null){
+                tag.setUserId(user.getId());
+                return tagRepository.save(tag);
+            }else {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public Page<Tag> getTagList(Pageable pageable) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user != null){
+            return tagRepository.findAllByUserId(user.getId(),pageable);
+        }
+        return null;
+    }
+}

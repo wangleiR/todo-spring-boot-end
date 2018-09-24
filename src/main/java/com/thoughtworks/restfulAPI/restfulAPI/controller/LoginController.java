@@ -1,5 +1,6 @@
 package com.thoughtworks.restfulAPI.restfulAPI.controller;
 
+import com.thoughtworks.restfulAPI.restfulAPI.model.Token;
 import com.thoughtworks.restfulAPI.restfulAPI.model.User;
 import com.thoughtworks.restfulAPI.restfulAPI.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class LoginController {
     private UserService userService;
 
     @PostMapping
-    public String login(@RequestBody User user){
+    public Token login(@RequestBody User user){
         return userService.login(user);
     }
 

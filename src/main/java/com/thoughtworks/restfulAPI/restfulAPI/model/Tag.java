@@ -18,6 +18,7 @@ public class Tag {
     @Id
     @GeneratedValue
     private Long id;
-    private String tagName;
     private Long userId;
+    private String value;
+    private String label;
 }
