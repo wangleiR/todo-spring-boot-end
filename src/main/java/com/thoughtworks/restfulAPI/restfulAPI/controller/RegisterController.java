@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/register")
 public class RegisterController {
@@ -16,7 +18,8 @@ public class RegisterController {
     private UserService userService;
 
     @PostMapping
-    public void register(@RequestBody User user){
+    public void register(@RequestBody User user) throws NoSuchAlgorithmException {
         userService.register(user);
     }
+
 }

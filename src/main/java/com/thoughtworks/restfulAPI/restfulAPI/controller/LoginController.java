@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/login")
 public class LoginController {
@@ -17,7 +19,7 @@ public class LoginController {
     private UserService userService;
 
     @PostMapping
-    public Token login(@RequestBody User user){
+    public Token login(@RequestBody User user) throws NoSuchAlgorithmException {
         return userService.login(user);
     }
 
