@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/todos")
@@ -40,13 +41,13 @@ public class TodoController {
     }
 
     @PutMapping
-    public void editTodo(@RequestBody Todo todo){
-         todoService.editTodo(todo);
+    public Todo editTodo(@RequestBody Todo todo){
+         return todoService.editTodo(todo);
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteTodo(@PathVariable(value = "id") Long id){
-        todoService.deleteTodo(id);
+    public Map<String,Long> deleteTodo(@PathVariable(value = "id") Long id){
+        return todoService.deleteTodo(id);
     }
 
 

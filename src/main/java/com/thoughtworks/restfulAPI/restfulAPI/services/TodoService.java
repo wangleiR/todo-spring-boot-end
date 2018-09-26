@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class TodoService {
 
@@ -45,7 +48,7 @@ public class TodoService {
         return todoRepository.save(todo);
     }
 
-    public void editTodo(Todo todo) {
+    public Todo editTodo(Todo todo) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Todo editTodo = todoRepository.findByIdAndUserId(todo.getId(),user.getId());
         editTodo.setName(todo.getName());
@@ -53,12 +56,15 @@ public class TodoService {
         editTodo.setStatus(todo.getStatus());
         editTodo.setTags(todo.getTags());
         editTodo.setUserId(user.getId());
-        todoRepository.save(editTodo);
+        return todoRepository.save(editTodo);
     }
 
-    public void deleteTodo(Long id) {
+    public  Map<String,Long> deleteTodo(Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String,Long> map = new HashMap<>();
         todoRepository.deleteByIdAndUserId(id,user.getId());
+        map.put("id",id);
+        return map;
     }
 
     public Page<Todo> getListWithPage(Integer page, Integer size) {
